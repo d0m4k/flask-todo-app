@@ -1,133 +1,180 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>To-do app</title>
     <style>
-        *{
-            width: 100%;
-            margin: auto;
-            box-sizing: border-box;
-            color: rgb(161, 108, 108);
-        }
+              *{
+                  width: 100%;
+                  margin: auto;
+                  box-sizing: border-box;
+                  color: rgb(161, 108, 108);
+              }
 
-        html, body{
-            height: 100%;
-        }
+              html, body{
+                  height: 100%;
+                  background-color: rgb(102, 88, 88);
+              }
 
-        .container{
-            height: 100%;
-            background-color: rgb(102, 88, 88);
-            padding: 20px;
-        }
+              .container{
+                  height: 100%;
+                  
+                  padding: 20px;
+              }
 
-        .user-input{
-            display: flex;
-        }
+              .user-input{
+                  display: flex;
+              }
 
-        .user-input .text{
-            width: 80%;
-        }
+              .user-input .text{
+                  width: 80%;
+              }
 
-        .user-input .add-btn{
-            width: fit-content;
-        }
+              .user-input .add-btn{
+                  width: fit-content;
+              }
 
-        /* user input */
+              /* user input */
 
-        .display-todo{
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
+              .display-todo{
+                  display: flex;
+                  flex-direction: column;
+                  justify-content: center;
+              }
 
-        .display-todo .todo{
-            width: 90%;
-            display: flex;
-            padding: 10px;
-            background-color: wheat;
-            border-radius: 10px;
-            margin: 10px auto;
-        }
+              .todo span{
+                position: relative;
+                top: -25px;
+                text-align: center;
+                left: 100px;
+                font-family: monospace;
+                color: black;
+                text-decoration: underline;
+             }
+             .todo span::before{
+                content: "Username - ";
+                }
 
-        .todo .options{
-            display: flex;
-        }
+      .todo .text{
+          position: absolute;
+      }
 
-        .options div{
-            text-align: center;
-            padding: 10px;
-            border-radius: 20px;
-        }
-        .options .delete{
-            color: white;
-            background-color: red;
-        }
+              .display-todo .todo{
+                  width: 90%;
+                  display: flex;
+                  padding: 30px;
+                  background-color: wheat;
+                  border-radius: 10px;
+                  margin: 10px auto;
+                  
+              }
 
-        .options .edit{
-            color: black;
-            background-color: whitesmoke;
-        }
+              .todo .options{
+                  display: flex;
+              }
 
-        .options .delete a{
-            text-decoration: none;
-            color: wheat;
-        }
+              .options div{
+                  text-align: center;
+                  padding: 10px;
+                  border-radius: 20px;
+              }
+              .options .delete{
+                  color: white;
+                  background-color: red;
+              }
+
+              .options .edit{
+                  color: black;
+                  background-color: whitesmoke;
+              }
+
+              .options .delete a{
+                  text-decoration: none;
+                  color: wheat;
+              }
+
+              .logout a{
+                text-decoration: none;
+                color: white;
+                background-color: black;
+                padding: 10px;
+                display: block;
+                width: fit-content;
+                margin-right: 10px;
+                margin-bottom: 10px;
+              }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <form action="/add-todo" method="post">
-            <div class="user-input">
-                <div class="text">
-                    <textarea name="todo-text" id="" placeholder="Enter todo.."></textarea>
-                </div>
-                <div class="add-btn">
-                    <input type="submit" value="Add-Todo">
-                </div>
-            </div>
-        </form>
-        <div class="display-todo">
-            {% for todo in my_todos %}
-            <!-- 
+      <h1>Current User: {{ current_user["username"] }}</h1>
+      <div class="logout">
+        <a href="/auth/logout">Logout</a>
+      </div>
+      <form action="/add-todo" method="post">
+        <div class="user-input">
+          <div class="text">
+            <textarea
+              name="todo-text"
+              id=""
+              placeholder="Enter todo.."
+            ></textarea>
+          </div>
+          <div class="add-btn">
+            <input type="submit" value="Add-Todo" />
+          </div>
+        </div>
+      </form>
+      <div class="display-todo">
+        {% for todo in my_todos %}
+    
+        <!-- 
 
                 [(0, eat, 901921)
                 (1, sleep, 92839)]
              -->
-            <div class="todo">
-                <div class="text" 
-                contenteditable="true" 
-                id="edit-text-{{ todo[0] }}">{{ todo[1] }}</div>
-                <div class="options">
-                    <div class="edit" id="edit" onclick="editTodo('{{ todo[0] }}')">Edit</div>
-                    <div class="delete">
-                        <a href="/delete?id={{ todo[0] }}">Delete</a>
-                    </div>
-                </div>
+        <div class="todo">
+          <span>{{ todo[4] }}</span>
+          {% if todo[1] == current_user["user_id"]%}
+          <div class="text" contenteditable="true" id="edit-text-{{ todo[0] }}">
+            {{ todo[2] }}
+          </div>
+          <div class="options">
+            <div class="edit" id="edit" onclick="editTodo('{{ todo[0] }}')">
+              Edit
             </div>
-            {% endfor %}
-            
+            <div class="delete">
+              <a href="/delete?id={{ todo[0] }}">Delete</a>
+            </div>
+          </div>
+          {% else %}
+          <div class="text" id="edit-text-{{ todo[0] }}">
+            {{ todo[2] }}
+          </div>
+          {% endif %}
+          
         </div>
+        {% endfor %}
+      </div>
     </div>
     <script>
-        function editTodo(todo_id){
-            const edit_data = {
-                todo_id: todo_id,
-                edit_text: document.getElementById("edit-text-" + todo_id).innerText
-            } 
-            fetch("/edit",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(edit_data)
-                }
-            ).then( response => response.json() )
-            .then( data => console.log(data))
-            .catch(error => console.error(error))
-        }
+      function editTodo(todo_id) {
+        const edit_data = {
+          todo_id: todo_id,
+          edit_text: document.getElementById("edit-text-" + todo_id).innerText,
+        };
+        fetch("/edit", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(edit_data),
+        })
+          .then((response) => response.json())
+          .then((data) => console.log(data))
+          .catch((error) => console.error(error));
+      }
     </script>
-</body>
+  </body>
 </html>
